@@ -16,7 +16,7 @@ interface Product {
 }
 
 // 2. ⚠️ อย่าลืมเปลี่ยนตรงนี้ให้เป็นลิงก์ Raw URL จาก GitHub ของคุณนะครับ
-const PRODUCTS_URL = 'https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/products.json';
+const PRODUCTS_URL = 'https://raw.githubusercontent.com/chinawut-s/MyProfileAppChinawut/refs/heads/main/products.json';
 
 export default function HomeScreen() {
   const [products, setProducts] = useState<Product[]>([]);
