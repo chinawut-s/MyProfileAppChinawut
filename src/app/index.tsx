@@ -1,318 +1,140 @@
-import {
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const products = [
-  {
-    id: '1',
-    name: 'ชุดสี YAMAHA GRAND FILANO',
-    stock: 12,
-    category: 'Motorcycle Fairings',
-    location: 'Warehouse A',
-    status: 'Active',
-    imageUrl: 'https://i.pinimg.com/736x/8f/c6/be/8fc6be396c443b7cca2d18fd7c9096c3.jpg',
-  },
-  {
-    id: '2',
-    name: 'ชุดสี HONDA GIORNO',
-    stock: 5,
-    category: 'Motorcycle Fairings',
-    location: 'Warehouse B',
-    status: 'Active',
-    imageUrl: 'https://i.pinimg.com/1200x/67/2e/78/672e7827ad43bc87c19e2ada7a0f686f.jpg',
-  },
-  {
-    id: '3',
-    name: 'ชุดสี HONDA PCX',
-    stock: 3,
-    category: 'Motorcycle Fairings',
-    location: 'Showroom 1',
-    status: 'Active',
-    imageUrl: 'https://i.pinimg.com/736x/66/4a/aa/664aaa7f1e2f9055fae5f5402ea93068.jpg',
-  },
-];
+// 1. กำหนด โครงสร้างข้อมูลสำหรับชุดสีมอเตอร์ไซค์
+interface Product {
+  id: string;
+  name: string;
+  stock: number;
+  stock_text: string;
+  category: string;
+  location_text: string;
+  badge_status: string;
+  image_url: string;
+}
 
-export default function ProductsScreen() {
+// 2. ⚠️ อย่าลืมเปลี่ยนตรงนี้ให้เป็นลิงก์ Raw URL จาก GitHub ของคุณนะครับ
+const PRODUCTS_URL = 'https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/products.json';
+
+export default function HomeScreen() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const router = useRouter(); // ใช้สำหรับกดเปลี่ยนหน้า
+
+  // ฟังก์ชันดึงข้อมูล JSON จาก GitHub Raw URL
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        const response = await fetch(PRODUCTS_URL);
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    }
+    void loadProducts();
+  }, []);
+
+  // ฟังก์ชันแสดงการ์ดสินค้าแต่ละชิ้น (เหมือนในรูปหน้าจอของคุณ)
+  const renderProductItem = ({ item }: { item: Product }) => (
+    <View style={styles.productCard}>
+      {/* แสดงรูปภาพสินค้า */}
+      <Image source={{ uri: item.image_url }} style={styles.productImage} />
+      
+      {/* แสดงรายละเอียดสินค้า */}
+      <View style={styles.productDetails}>
+        <Text style={styles.stockText}>{item.stock_text}</Text>
+        <Text style={styles.infoText}>Category: {item.category}</Text>
+        <Text style={styles.infoText}>Location: {item.location_text}</Text>
+        <Text style={styles.productName}>{item.name}</Text>
+      </View>
+
+      {/* ปุ่มสถานะ และ ปุ่มลูกศรสำหรับกดลิงก์ไปหน้าอื่น */}
+      <View style={styles.rightActions}>
+        <View style={[
+          styles.badge, 
+          { backgroundColor: item.badge_status === 'Active' ? '#6200EE' : '#B3261E' } // สีพื้นหลังปุ่มสถานะ
+        ]}>
+          <Text style={styles.badgeText}>{item.badge_status}</Text>
+        </View>
+
+        {/* 🌟 จุดกดลิงก์: เมื่อกดปุ่มลูกศรจะพาไปหน้าดูรายละเอียดสินค้า (ส่ง id ติดไปด้วย) */}
+        <TouchableOpacity 
+          style={styles.arrowButton} 
+          onPress={() => router.push(`/product-detail?id=${item.id}`)}
+        >
+          <Ionicons name="chevron-forward" size={14} color="#6200EE" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f8f9fa" />
-
+      {/* 1. ส่วนหัวบนสุด (Header Component) */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.menuButton}>
-          <Text style={styles.menuIcon}>☰</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Products</Text>
-        <TouchableOpacity style={styles.profileButton}>
-          <Text style={styles.profileIcon}>👤</Text>
-        </TouchableOpacity>
+        <Ionicons name="menu" size={24} color="black" />
+        <Text style={styles.headerTitle}>Expo Starter</Text>
+        <View style={styles.profileCircle}>
+          <Ionicons name="person" size={16} color="white" />
+        </View>
       </View>
 
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Text style={styles.searchIcon}>🔍</Text>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search products..."
-            placeholderTextColor="#999"
-            editable={false}
-          />
+      {/* 2. แถบค้นหาและปุ่มเพิ่มสินค้า (Action Bar) */}
+      <View style={styles.actionBar}>
+        <View style={styles.searchBox}>
+          <Ionicons name="search" size={18} color="#79747E" />
+          <Text style={styles.searchPlaceholder}>Search products...</Text>
         </View>
-        <TouchableOpacity style={styles.addButton}>
+
+        {/* 🌟 จุดกดลิงก์: เมื่อกดปุ่มนี้จะพาเปลี่ยนเส้นทางไปหน้าฟอร์มเพิ่มสินค้า */}
+        <TouchableOpacity 
+          style={styles.addButton} 
+          onPress={() => router.push('/add')}
+        >
           <Text style={styles.addButtonText}>+ Add Product</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.filterButton}>
-          <Text style={styles.filterText}>Filter ▼</Text>
+          <Text style={styles.filterButtonText}>Filter </Text>
+          <Ionicons name="funnel" size={14} color="#6200EE" />
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.productsList} showsVerticalScrollIndicator={false}>
-        {products.map((product) => (
-          <View key={product.id} style={styles.productCard}>
-            <View style={styles.productInfo}>
-              <Image
-                source={{ uri: product.imageUrl }}
-                style={styles.productImage}
-                resizeMode="cover"
-              />
-              <View style={styles.productDetails}>
-                <Text style={styles.stockText}>Stock: {product.stock} in stock</Text>
-                <Text style={styles.categoryText}>Category: {product.category}</Text>
-                <Text style={styles.locationText}>Location: {product.location}</Text>
-              </View>
-              <View style={styles.productActions}>
-                <TouchableOpacity style={styles.statusButton}>
-                  <Text style={styles.statusText}>{product.status}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.moreButton}>
-                  <Text style={styles.moreIcon}>›</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <Text style={styles.productName}>{product.name}</Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>🏠</Text>
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>+</Text>
-          <Text style={styles.navText}>Add</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>🏍️</Text>
-          <Text style={[styles.navText, { color: '#8B5CF6' }]}>Products</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>📂</Text>
-          <Text style={styles.navText}>Categories</Text>
-        </TouchableOpacity>
-      </View>
+      {/* 3. รายการสินค้าทั้งหมดที่ดึงมาจาก GitHub (FlatList) */}
+      <FlatList
+        data={products}
+        keyExtractor={(item) => item.id}
+        renderItem={renderProductItem}
+        contentContainerStyle={styles.listContainer}
+      />
     </SafeAreaView>
   );
 }
 
+// ส่วนตกแต่งความสวยงาม (Styles) ให้ตรงกับหน้าจอของคุณ
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f9fa',
-  },
-  // Header Styles
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
-  },
-  menuButton: {
-    width: 38,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  menuIcon: {
-    fontSize: 18,
-    color: '#333',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#8B5CF6',
-  },
-  profileButton: {
-    width: 30,
-    height: 30,
-    backgroundColor: '#8B5CF6',
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  profileIcon: {
-    fontSize: 16,
-    color: 'white',
-  },
-  // Search Container Styles
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
-  },
-  searchBar: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginRight: 10,
-  },
-  searchIcon: {
-    fontSize: 16,
-    color: '#999',
-  },
-  searchInput: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    fontSize: 14,
-    color: '#333',
-  },
-  addButton: {
-    backgroundColor: '#8B5CF6',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginRight: 10,
-  },
-  addButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  filterButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-  },
-  filterText: {
-    color: '#8B5CF6',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  // Product List Styles
-  productsList: {
-    flex: 1,
-    padding: 20,
-  },
-  productCard: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  productInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  productImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    backgroundColor: '#fefefe',
-  },
-  productDetails: {
-    flex: 1,
-    marginLeft: 15,
-  },
-  stockText: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 2,
-  },
-  categoryText: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 2,
-  },
-  locationText: {
-    fontSize: 14,
-    color: '#666',
-  },
-  productActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  statusButton: {
-    backgroundColor: '#8B5CF6',
-    borderRadius: 15,
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    marginRight: 10,
-  },
-  statusText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  moreButton: {
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  moreIcon: {
-    fontSize: 20,
-    color: '#8B5CF6',
-  },
-  productName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-  },
-  // Bottom Navigation Styles
-  bottomNav: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
-  },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 5,
-  },
-  navIcon: {
-    fontSize: 20,
-    marginBottom: 4,
-  },
-  navText: {
-    fontSize: 12,
-    color: '#666',
-  },
+  container: { flex: 1, backgroundColor: '#FAF9F6' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#EEEEEE' },
+  headerTitle: { fontSize: 18, fontWeight: 'bold' },
+  profileCircle: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#6200EE', justifyContent: 'center', alignItems: 'center' },
+  actionBar: { flexDirection: 'row', padding: 12, alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#fff' },
+  searchBox: { flexDirection: 'row', backgroundColor: '#F3F3F3', padding: 8, borderRadius: 8, flex: 1, marginRight: 8, alignItems: 'center' },
+  searchPlaceholder: { color: '#79747E', marginLeft: 8, fontSize: 14 },
+  addButton: { backgroundColor: '#6200EE', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8, marginRight: 8 },
+  addButtonText: { color: 'white', fontWeight: 'bold', fontSize: 13 },
+  filterButton: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#6200EE', paddingVertical: 7, paddingHorizontal: 10, borderRadius: 8 },
+  filterButtonText: { color: '#6200EE', fontSize: 13 },
+  listContainer: { padding: 12 },
+  productCard: { flexDirection: 'row', backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 12, alignItems: 'center', borderWidth: 1, borderColor: '#EEEEEE' },
+  productImage: { width: 65, height: 65, borderRadius: 8, resizeMode: 'contain' },
+  productDetails: { flex: 1, marginLeft: 16 },
+  stockText: { fontSize: 12, color: '#79747E' },
+  infoText: { fontSize: 12, color: '#79747E', marginTop: 2 },
+  productName: { fontSize: 15, fontWeight: 'bold', marginTop: 6, color: '#1C1B1F' },
+  rightActions: { flexDirection: 'row', alignItems: 'center' },
+  badge: { paddingVertical: 4, paddingHorizontal: 12, borderRadius: 12, marginRight: 12 },
+  badgeText: { fontSize: 12, fontWeight: 'bold', color: 'white' },
+  arrowButton: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#F3EDF7', justifyContent: 'center', alignItems: 'center' }
 });

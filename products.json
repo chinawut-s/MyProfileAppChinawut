@@ -1,0 +1,35 @@
+[
+  {
+    "id": "1",
+    "name": "ชุดสี YAMAHA GRAND FILANO",
+    "stock": 12,
+    "stock_text": "12 in stock",
+    "category": "Motorcycle Fairings",
+    "location_count": 0,
+    "location_text": "Warehouse A",
+    "badge_status": "Active",
+    "image_url": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/assets/grand_filano.jpg"
+  },
+  {
+    "id": "2",
+    "name": "ชุดสี HONDA GIORNO",
+    "stock": 5,
+    "stock_text": "5 in stock",
+    "category": "Motorcycle Fairings",
+    "location_count": 0,
+    "location_text": "Warehouse B",
+    "badge_status": "Active",
+    "image_url": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/assets/giorno.jpg"
+  },
+  {
+    "id": "3",
+    "name": "ชุดสี HONDA PCX",
+    "stock": 3,
+    "stock_text": "3 in stock",
+    "category": "Motorcycle Fairings",
+    "location_count": 0,
+    "location_text": "Showroom 1",
+    "badge_status": "Active",
+    "image_url": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/assets/pcx.jpg"
+  }
+]
