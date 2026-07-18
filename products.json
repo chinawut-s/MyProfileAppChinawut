@@ -8,7 +8,7 @@
     "location_count": 0,
     "location_text": "Warehouse A",
     "badge_status": "Active",
-    "image_url": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/assets/grand_filano.jpg"
+    "image_url": "https://raw.githubusercontent.com/chinawut-s/MyProfileAppChinawut/refs/heads/main/assets/images/8fc6be396c443b7cca2d18fd7c9096c3.jpg"
   },
   {
     "id": "2",
@@ -19,7 +19,7 @@
     "location_count": 0,
     "location_text": "Warehouse B",
     "badge_status": "Active",
-    "image_url": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/assets/giorno.jpg"
+    "image_url": "https://raw.githubusercontent.com/chinawut-s/MyProfileAppChinawut/refs/heads/main/assets/images/672e7827ad43bc87c19e2ada7a0f686f.jpg"
   },
   {
     "id": "3",
@@ -30,6 +30,6 @@
     "location_count": 0,
     "location_text": "Showroom 1",
     "badge_status": "Active",
-    "image_url": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/assets/pcx.jpg"
+    "image_url": "https://raw.githubusercontent.com/chinawut-s/MyProfileAppChinawut/refs/heads/main/assets/images/664aaa7f1e2f9055fae5f5402ea93068.jpg"
   }
 ]
