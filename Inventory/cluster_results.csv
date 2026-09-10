@@ -1,0 +1,4 @@
+﻿id,name,model,price,stock,cluster,group
+50,HONDA WAVE,Wave 125i,1000.0,8,0,ราคาต่ำ
+44,HONDA GIORNO,HONDA GIORNO 2024,3000.0,1,1,ราคาปานกลาง
+49,HONDA PCX,PCX 160,5000.0,1,2,ราคาสูง
